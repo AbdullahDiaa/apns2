@@ -87,7 +87,7 @@ func (m *ClientManager) Add(client *Client) {
 // or if a Client has remained in the manager longer than MaxAge, Get will call
 // the ClientManager's Factory function, store the result in the manager if
 // non-nil, and return it.
-func (m *ClientManager) Get(certificate tls.Certificate) *Client {
+func (m *ClientManager) Get(certificate tls.Certificate, prod int) *Client {
 	if m.cache == nil {
 		m.initInternals()
 	}
@@ -97,19 +97,24 @@ func (m *ClientManager) Get(certificate tls.Certificate) *Client {
 	now := time.Now()
 	if ele, hit := m.cache[key]; hit {
 		item := ele.Value.(*managerItem)
-		if m.MaxAge != 0 && item.lastUsed.Before(now.Add(-m.MaxAge)) {
-			c := m.Factory(certificate)
-			if c == nil {
-				return nil
-			}
-			item.client = c
-		}
 		item.lastUsed = now
 		m.ll.MoveToFront(ele)
 		return item.client
 	}
 
-	c := m.Factory(certificate)
+	var c *Client
+
+	if prod == 1 {
+		//iOS production
+		c = m.Factory(certificate).Production()
+	} else if prod == 0 {
+		//iOS development
+		c = m.Factory(certificate).Development()
+	} else {
+		//Apple Push services
+		c = m.Factory(certificate)
+	}
+
 	if c == nil {
 		return nil
 	}
