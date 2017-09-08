@@ -116,6 +116,8 @@ type Response struct {
 	// and Remote Notification Programming Guide.
 	StatusCode int
 
+	Token string
+
 	// The APNs error string indicating the reason for the notification failure (if
 	// any). The error code is specified as a string. For a list of possible
 	// values, see the Reason constants above.

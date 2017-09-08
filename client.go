@@ -137,6 +137,7 @@ func (c *Client) PushWithContext(ctx Context, n *Notification) (*Response, error
 
 	response := &Response{}
 	response.StatusCode = httpRes.StatusCode
+	response.Token = n.DeviceToken
 	response.ApnsID = httpRes.Header.Get("apns-id")
 
 	decoder := json.NewDecoder(httpRes.Body)
