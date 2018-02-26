@@ -110,12 +110,13 @@ const (
 // surrounding the rejection.
 type Response struct {
 
-	// The HTTP status code retuened by APNs.
+	// The HTTP status code returned by APNs.
 	// A 200 value indicates that the notification was successfully sent.
 	// For a list of other possible status codes, see table 6-4 in the Apple Local
 	// and Remote Notification Programming Guide.
 	StatusCode int
 
+	//Device Token
 	Token string
 
 	// The APNs error string indicating the reason for the notification failure (if
