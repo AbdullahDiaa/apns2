@@ -83,11 +83,15 @@ func (m *ClientManager) Add(client *Client) {
 	}
 }
 
+func (m *ClientManager) Get(certificate tls.Certificate) *Client {
+	return m.Getenv(certificate, 2)
+}
+
 // Get gets a Client from the manager. If a Client is not found in the manager
 // or if a Client has remained in the manager longer than MaxAge, Get will call
 // the ClientManager's Factory function, store the result in the manager if
 // non-nil, and return it.
-func (m *ClientManager) Get(certificate tls.Certificate, prod int) *Client {
+func (m *ClientManager) Getenv(certificate tls.Certificate, prod int) *Client {
 	m.initInternals()
 	m.mu.Lock()
 	defer m.mu.Unlock()
@@ -96,20 +100,29 @@ func (m *ClientManager) Get(certificate tls.Certificate, prod int) *Client {
 	now := time.Now()
 	if ele, hit := m.cache[key]; hit {
 		item := ele.Value.(*managerItem)
-		/*if m.MaxAge != 0 && item.lastUsed.Before(now.Add(-m.MaxAge)) {
-			c := m.Factory(certificate)
+		if m.MaxAge != 0 && item.lastUsed.Before(now.Add(-m.MaxAge)) {
+			var c *Client
+			if prod == 1 {
+				//iOS production
+				c = m.Factory(certificate).Production()
+			} else if prod == 0 {
+				//iOS development
+				c = m.Factory(certificate).Development()
+			} else {
+				//Apple Push services
+				c = m.Factory(certificate)
+			}
 			if c == nil {
 				return nil
 			}
 			item.client = c
-		}*/
+		}
+
 		item.lastUsed = now
 		m.ll.MoveToFront(ele)
 		return item.client
 	}
-
 	var c *Client
-
 	if prod == 1 {
 		//iOS production
 		c = m.Factory(certificate).Production()
@@ -120,7 +133,6 @@ func (m *ClientManager) Get(certificate tls.Certificate, prod int) *Client {
 		//Apple Push services
 		c = m.Factory(certificate)
 	}
-
 	if c == nil {
 		return nil
 	}
