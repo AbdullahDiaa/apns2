@@ -7,9 +7,9 @@ import (
 
 	"flag"
 
-	"github.com/AbdullahDiaa/apns2"
-	"github.com/AbdullahDiaa/apns2/certificate"
-	"github.com/AbdullahDiaa/apns2/payload"
+	"github.com/abdullahdiaa/apns2"
+	"github.com/abdullahdiaa/apns2/certificate"
+	"github.com/abdullahdiaa/apns2/payload"
 )
 
 func main() {

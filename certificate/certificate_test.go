@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/AbdullahDiaa/apns2/certificate"
+	"github.com/abdullahdiaa/apns2/certificate"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -111,5 +111,5 @@ func verifyHostname(cert tls.Certificate) error {
 	if cert.Leaf == nil {
 		return errors.New("expected leaf cert")
 	}
-	return cert.Leaf.VerifyHostname("APNS/2 Development IOS Push Services: com.AbdullahDiaa.Apns2")
+	return cert.Leaf.VerifyHostname("APNS/2 Development IOS Push Services: com.abdullahdiaa.Apns2")
 }
